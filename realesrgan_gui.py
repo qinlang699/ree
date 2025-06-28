@@ -5,6 +5,7 @@ import os
 import subprocess
 import threading
 
+
 class RealESRGAN_GUI(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -46,22 +47,22 @@ class RealESRGAN_GUI(ctk.CTk):
         self.output_button = ctk.CTkButton(self.io_frame, text="浏览...", width=100, command=self.select_output_path)
         self.output_button.grid(row=1, column=2, padx=(10, 20), pady=10)
 
-
         # --- 选项 框架 ---
         self.options_frame = ctk.CTkFrame(self)
         self.options_frame.grid(row=1, column=0, padx=20, pady=10, sticky="ns")
         self.options_label = ctk.CTkLabel(self.options_frame, text="核心选项", font=ctk.CTkFont(size=14, weight="bold"))
-        self.options_label.grid(row=0, column=0, padx=20, pady=(10,5))
+        self.options_label.grid(row=0, column=0, padx=20, pady=(10, 5))
 
         # 模型选择
         self.model_label = ctk.CTkLabel(self.options_frame, text="AI模型:")
-        self.model_label.grid(row=1, column=0, padx=20, pady=(10,0), sticky="w")
-        self.model_menu = ctk.CTkOptionMenu(self.options_frame, values=list(self.model_map.keys()), command=self.update_ui_for_model)
+        self.model_label.grid(row=1, column=0, padx=20, pady=(10, 0), sticky="w")
+        self.model_menu = ctk.CTkOptionMenu(
+            self.options_frame, values=list(self.model_map.keys()), command=self.update_ui_for_model)
         self.model_menu.grid(row=2, column=0, padx=20, pady=(5, 10))
 
         # 放大倍数
         self.outscale_label = ctk.CTkLabel(self.options_frame, text="放大倍数:")
-        self.outscale_label.grid(row=3, column=0, padx=20, pady=(10,0), sticky="w")
+        self.outscale_label.grid(row=3, column=0, padx=20, pady=(10, 0), sticky="w")
         self.outscale_entry = ctk.CTkEntry(self.options_frame, placeholder_text="默认自动")
         self.outscale_entry.grid(row=4, column=0, padx=20, pady=(5, 10))
 
@@ -73,12 +74,14 @@ class RealESRGAN_GUI(ctk.CTk):
         self.dynamic_frame = ctk.CTkFrame(self)
         self.dynamic_frame.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
         self.dynamic_label = ctk.CTkLabel(self.dynamic_frame, text="动态参数", font=ctk.CTkFont(size=14, weight="bold"))
-        self.dynamic_label.grid(row=0, column=0, padx=20, pady=(10,5))
+        self.dynamic_label.grid(row=0, column=0, padx=20, pady=(10, 5))
 
         # 降噪强度 (realesr-general-x4v3)
         self.dn_label = ctk.CTkLabel(self.dynamic_frame, text="降噪强度 (0-1):")
         self.dn_slider_val = ctk.CTkLabel(self.dynamic_frame, text="0.5")
-        self.dn_slider = ctk.CTkSlider(self.dynamic_frame, from_=0, to=1, number_of_steps=100, command=lambda val: self.dn_slider_val.configure(text=f"{val:.2f}"))
+        self.dn_slider = ctk.CTkSlider(
+            self.dynamic_frame, from_=0, to=1, number_of_steps=100, command=lambda val: self.dn_slider_val.configure(
+                text=f"{val:.2f}"))
         self.dn_slider.set(0.5)
 
         # 视频处理并发数 (realesr-animevideov3)
@@ -96,10 +99,12 @@ class RealESRGAN_GUI(ctk.CTk):
         self.run_log_frame.grid_rowconfigure(1, weight=1)
         self.run_log_frame.grid_columnconfigure(0, weight=1)
 
-        self.run_button = ctk.CTkButton(self.run_log_frame, text="开始处理", font=ctk.CTkFont(size=14, weight="bold"), command=self.start_processing_thread)
+        self.run_button = ctk.CTkButton(
+            self.run_log_frame, text="开始处理", font=ctk.CTkFont(size=14, weight="bold"),
+            command=self.start_processing_thread)
         self.run_button.grid(row=0, column=0, padx=20, pady=10)
         self.log_textbox = ctk.CTkTextbox(self.run_log_frame, state="disabled", wrap="word")
-        self.log_textbox.grid(row=1, column=0, padx=20, pady=(0,20), sticky="nsew")
+        self.log_textbox.grid(row=1, column=0, padx=20, pady=(0, 20), sticky="nsew")
 
         # 初始化UI
         self.update_ui_for_model(self.model_menu.get())
@@ -108,7 +113,8 @@ class RealESRGAN_GUI(ctk.CTk):
         model_name = self.model_map[selected_display_name]
 
         # Hide all dynamic widgets first
-        for widget in [self.dn_label, self.dn_slider, self.dn_slider_val, self.num_process_label, self.num_process_entry, self.ext_label, self.ext_menu]:
+        for widget in [self.dn_label, self.dn_slider, self.dn_slider_val, self.num_process_label,
+                       self.num_process_entry, self.ext_label, self.ext_menu]:
             widget.grid_forget()
 
         # Show relevant widgets based on model
@@ -120,7 +126,7 @@ class RealESRGAN_GUI(ctk.CTk):
         if model_name == 'realesr-animevideov3':
             self.num_process_label.grid(row=3, column=0, padx=20, pady=(10, 0), sticky="w")
             self.num_process_entry.grid(row=4, column=0, padx=20, pady=5, sticky="ew")
-        else: # All other models are for images
+        else:  # All other models are for images
             self.ext_label.grid(row=5, column=0, padx=20, pady=(10, 0), sticky="w")
             self.ext_menu.grid(row=6, column=0, padx=20, pady=5, sticky="ew")
 
@@ -134,7 +140,8 @@ class RealESRGAN_GUI(ctk.CTk):
     def select_input_path(self):
         # Allow selecting a file or a directory
         # For simplicity, we ask the user what they want to select first
-        path_type = tkinter.messagebox.askquestion("选择类型", "是否要选择一个文件夹？\n'是' - 选择文件夹\n'否' - 选择单个文件")
+        path_type = tkinter.messagebox.askquestion(
+            "选择类型", "是否要选择一个文件夹？\n'是' - 选择文件夹\n'否' - 选择单个文件")
         if path_type == 'yes':
             path = filedialog.askdirectory()
         else:
@@ -197,7 +204,7 @@ class RealESRGAN_GUI(ctk.CTk):
                         output_subfolder = "total_png"
                     else:
                         output_subfolder = "total_cant"
-                else: # single image
+                else:  # single image
                     if self.face_enhance_check.get():
                         output_subfolder = "single_face"
                     else:
@@ -208,7 +215,8 @@ class RealESRGAN_GUI(ctk.CTk):
             self.log(f"结果将保存至: {final_output_path}")
 
             # --- 3. Construct the command dynamically ---
-            command = ["python", script_to_run, "-n", model_name, "-i", input_path, "-o", final_output_path, "--fp32"]
+            command = ["python", script_to_run, "-n", model_name, "-i", input_path,
+                       "-o", final_output_path, "--fp32"]
 
             if self.face_enhance_check.get() and self.face_enhance_check.cget('state') == 'normal':
                 command.append("--face_enhance")
@@ -223,14 +231,16 @@ class RealESRGAN_GUI(ctk.CTk):
             if is_video:
                 if self.num_process_entry.get().strip():
                     command.extend(["--num_process_per_gpu", self.num_process_entry.get()])
-            else: # Image or Folder
+            else:  # Image or Folder
                 if self.ext_menu.get() != "auto":
                     command.extend(["--ext", self.ext_menu.get()])
 
             # --- 4. Execute and Log ---
             self.log(f"执行命令: {' '.join(command)}")
 
-            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding='utf-8', creationflags=subprocess.CREATE_NO_WINDOW)
+            process = subprocess.Popen(
+                command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+                encoding='utf-8', creationflags=subprocess.CREATE_NO_WINDOW)
 
             for line in iter(process.stdout.readline, ''):
                 if line:
@@ -248,10 +258,11 @@ class RealESRGAN_GUI(ctk.CTk):
 
         except Exception as e:
             self.log(f"发生未知错误: {e}")
-            messagebox.showerror("严重错误", f"发生未知错误: {e}")
+            messagebox.showerror("未知错误", f"发生未知错误: {e}")
+
         finally:
-            # Re-enable button
             self.run_button.configure(state="normal", text="开始处理")
+
 
 if __name__ == "__main__":
     app = RealESRGAN_GUI()
