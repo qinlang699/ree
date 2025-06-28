@@ -288,6 +288,9 @@ def run(args):
 
     num_gpus = torch.cuda.device_count()
     num_process = num_gpus * args.num_process_per_gpu
+    if num_process == 0:
+        num_process = 1
+
     if num_process == 1:
         inference_video(args, video_save_path)
         return

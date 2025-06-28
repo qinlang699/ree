@@ -84,7 +84,69 @@ Other recommended projects:<br>
 
 #### YouTube
 
-## 🔧 Dependencies and Installation
+---
+
+### 🚀 GUI Quick Start
+
+This project includes an easy-to-use graphical interface. Follow these steps to get started:
+
+**1. Clone the Repository**
+
+Clone this repository to your local machine.
+```bash
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
+```
+
+**2. Download AI Models**
+
+The AI models are required to run the application, but they are not included in this repository. You need to download them manually.
+
+First, create a `weights` folder:
+```bash
+mkdir weights
+```
+
+Then, download the model files into the `weights` folder. You can use the following commands:
+```bash
+# --- Main Models (Required) ---
+# General model (x4)
+wget https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth -P weights
+# General model (x2)
+wget https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.1/RealESRGAN_x2plus.pth -P weights
+# General small model (x4)
+wget https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesr-general-x4v3.pth -P weights
+# Anime model (x4)
+wget https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.2.4/RealESRGAN_x4plus_anime_6B.pth -P weights
+# Anime video model (x4)
+wget https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesr-animevideov3.pth -P weights
+
+# --- Face Enhancement Models (Optional, for --face_enhance) ---
+# These models should be placed in the gfpgan/weights directory.
+wget https://github.com/xinntao/facexlib/releases/download/v0.1.0/detection_Resnet50_Final.pth -P gfpgan/weights/
+wget https://github.com/xinntao/facexlib/releases/download/v0.1.0/parsing_parsenet.pth -P gfpgan/weights/
+```
+
+**3. Install Dependencies**
+
+Install all the required Python packages using the `requirements.txt` file. This single command will set up everything, including PyTorch with CUDA support for NVIDIA GPUs.
+```bash
+pip install -r requirements.txt
+```
+> **Note:** The `requirements.txt` is configured for NVIDIA GPUs with CUDA 11.3. If you are using a different setup (e.g., CPU-only or AMD GPU), you may need to adjust the `torch` installation accordingly.
+
+**4. Run the GUI**
+
+You are now ready to start the application!
+```bash
+python realesrgan_gui.py
+```
+
+---
+
+## 🔧 Dependencies and Installation (Original)
+
+If you are a developer and want to set up the environment manually or for training, please refer to the original instructions.
 
 - Python >= 3.7 (Recommend to use [Anaconda](https://www.anaconda.com/download/#linux) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html))
 - [PyTorch >= 1.7](https://pytorch.org/)

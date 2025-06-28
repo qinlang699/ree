@@ -135,6 +135,15 @@ def main():
         print('Testing', idx, imgname)
 
         img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+
+        if img is None:
+            print(f'WARNING: Cannot read image/directory: {path}. Skipping.')
+            continue
+
+        # convert gray to 3-channel BGR
+        if len(img.shape) == 2:
+            img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+
         if len(img.shape) == 3 and img.shape[2] == 4:
             img_mode = 'RGBA'
         else:
